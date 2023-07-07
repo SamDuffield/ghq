@@ -3,6 +3,7 @@ from functools import partial
 
 from numpy.polynomial.hermite_e import hermegauss
 from jax import numpy as jnp, jit, vmap
+from jax.lax import cond
 from jax.scipy.stats import norm
 
 
@@ -38,13 +39,31 @@ def univariate(
     Returns:
         out: Array of n approximate 1D Gaussian expectations.
     """
+    mean = jnp.array(mean)
+    sd = jnp.array(sd)
+
     n = mean.size
     x, w = hermegauss(degree)
     w = w[..., jnp.newaxis]  # extend shape to (degree, 1)
     x = jnp.repeat(x[..., jnp.newaxis], n, axis=1)  # extend shape to (degree, n)
     x = sd * x + mean
-    hx = vmap(integrand)(x)
-    return (w * hx).sum(0) / jnp.sqrt(2 * jnp.pi)
+    hx = vmap(integrand)(x).reshape(x.shape)
+    return jnp.squeeze((w * hx).sum(0) / jnp.sqrt(2 * jnp.pi))
+
+
+def lower_bound_transform(y, integrand, lower):
+    ey = jnp.exp(y)
+    return integrand(lower + ey) * ey
+
+
+def upper_bound_transform(y, integrand, upper):
+    ey = jnp.exp(y)
+    return -integrand(upper - ey) * ey
+
+
+def bounded_transform(y, integrand, lower, upper):
+    ily = inverse_logit(y)
+    return integrand(lower + (upper - lower) * ily) * (upper - lower) * ily * (1 - ily)
 
 
 @partial(jit, static_argnums=(0, 3))
@@ -76,23 +95,26 @@ def univariate_importance(
     Returns:
         out: Array of n approximate 1D integrations.
     """
+    def transformed_integrand(y):
+        res = cond((lower != -jnp.inf) * (upper == jnp.inf),
+                   lambda z: lower_bound_transform(z, integrand, lower),
+                   lambda _: y,
+                   y)
 
-    if lower != -jnp.inf and upper == jnp.inf:
-        def transformed_integrand(y):
-            ey = jnp.exp(y)
-            return integrand(lower + ey) * ey
-    elif lower == -jnp.inf and upper != jnp.inf:
-        def transformed_integrand(y):
-            ey = jnp.exp(y)
-            return -integrand(upper - ey) * ey
-    elif lower != -jnp.inf and upper != jnp.inf:
-        def transformed_integrand(y):
-            ily = inverse_logit(y)
-            return integrand(lower + (upper - lower) * ily) * (upper - lower) * ily * (1 - ily)
-    else:
-        transformed_integrand = integrand
+        res = cond((lower == -jnp.inf) * (upper != jnp.inf),
+                   lambda z: upper_bound_transform(z, integrand, upper),
+                   lambda _: y,
+                   y)
+
+        res = cond((lower != -jnp.inf) * (upper != jnp.inf),
+                   lambda z: bounded_transform(z, integrand, lower, upper),
+                   lambda _: y,
+                   y)
+        return res
 
     def importance_integrand(x):
-        return transformed_integrand(x) / norm.pdf(x, loc=mean, scale=sd)
+        pdf_evals = norm.pdf(x, loc=mean, scale=sd)
 
-    return univariate(mean, sd, importance_integrand, degree)
+        return jnp.where(pdf_evals > 0, transformed_integrand(x) / pdf_evals, 0)
+
+    return univariate(importance_integrand, mean, sd, degree)
