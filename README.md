@@ -18,11 +18,11 @@ $$
 \int_{-\infty}^{\infty} f(x)  \mathbf{N}(x \mid \mu, \sigma^2) dx \approx \sum_{i=1}^\mathsf{degree} w_i f(x_i),
 $$
 
-where $\{x_i, w_i\}_{i=1}^\mathsf{degree}$ are chosen [deterministically](https://en.wikipedia.org/wiki/Gauss%E2%80%93Hermite_quadrature).  The integral approximation can be executed easily with `ghq`:
+where $\lbrace x_i, w_i \rbrace_{i=1}^\mathsf{degree}$ are chosen [deterministically](https://en.wikipedia.org/wiki/Gauss%E2%80%93Hermite_quadrature).  The integral approximation can be executed easily with `ghq`:
 ```python
 ghq.univariate(f, mu, sigma, degree=32)
 ```
-where `f: Callable[[float], float]` is a JAX vectorisable function.
+where `f: Callable[[float], float]` is a JAX vectorisable function and `degree` is an optional argument controlling the number of function evalutions, increasing `degree` increases the accuracy of the integral.
 
 ## Univariate unbounded integrals
 More generally, we can use an importance-sampling-like approach to integrate functions of the form:
@@ -67,3 +67,10 @@ ghq.univariate_importance(f, mu, sigma, degree=32, lower=a, upper=b).
 ```
 
 The [Stan reference manual](https://mc-stan.org/docs/reference-manual/variable-transforms.html) provides an excellent reference for transformations of variables.
+
+
+
+## Multivariate integrals
+
+Coming soon...
+
