@@ -18,7 +18,7 @@ $$
 \int_{-\infty}^{\infty} f(x)  \mathbf{N}(x \mid \mu, \sigma^2) dx \approx \sum_{i=1}^\mathsf{degree} w_i f(x_i),
 $$
 
-where $\{x_i, w_i\}_{i=1}^\mathsf{degree}$ are chosen [deterministically](https://en.wikipedia.org/wiki/Gauss%E2%80%93Hermite_quadrature).  The integral approximation can be executed easily with `qhq`:
+where $\{x_i, w_i\}_{i=1}^\mathsf{degree}$ are chosen [deterministically](https://en.wikipedia.org/wiki/Gauss%E2%80%93Hermite_quadrature).  The integral approximation can be executed easily with `ghq`:
 ```python
 ghq.univariate(f, mu, sigma, degree=32)
 ```
@@ -31,7 +31,7 @@ $$
 \int_{-\infty}^{\infty} f(x) dx = \int_{-\infty}^{\infty} \frac{f(x)}{\mathbf{N}(x \mid \mu, \sigma^2)}  \mathbf{N}(x \mid \mu, \sigma^2)  dx \approx \sum_{i=1}^\mathsf{degree} w_i \frac{f(x_i)}{\mathbf{N}(x_i \mid \mu, \sigma^2)},
 $$
 
-and with `qhq`:
+and with `ghq`:
 ```python
 ghq.univariate_importance(f, mu, sigma, degree=32)
 ```
@@ -43,7 +43,7 @@ $$
 \int_{a}^{\infty} f(x) dx =\int_{-\infty}^{\infty} f(a + e^y) e^y  dy \approx \sum_{i=1}^\mathsf{degree} w_i \frac{f(a + e^{y_i}) e^{y_i}}{\mathbf{N}(y_i \mid \mu, \sigma^2)},
 $$
 
-where we use the transformation $y = \log(x - a)$ to map the lower-bounded integral to an unbounded integral. This can be approximated with `qhq`:
+where we use the transformation $y = \log(x - a)$ to map the lower-bounded integral to an unbounded integral. This can be approximated with `ghq`:
 ```python
 ghq.univariate_importance(f, mu, sigma, degree=32, lower=a)
 ```
@@ -61,7 +61,7 @@ $$
 
 where we use the transfomation $y=\text{logit}(\frac{x-a}{b-a})$ with $\text{logit}(u)=\log\frac{u}{1-u}$ and $\text{logit}^{-1}(v) = \frac{1}{1+e^{-v}}$.
 
-In `qhq` we have:
+In `ghq` we have:
 ```python
 ghq.univariate_importance(f, mu, sigma, degree=32, lower=a, upper=b).
 ```
