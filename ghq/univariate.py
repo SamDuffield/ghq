@@ -95,21 +95,28 @@ def univariate_importance(
     Returns:
         out: Array of n approximate 1D integrations.
     """
+
     def transformed_integrand(y):
-        res = cond((lower != -jnp.inf) * (upper == jnp.inf),
-                   lambda z: lower_bound_transform(z, integrand, lower),
-                   lambda _: y,
-                   y)
+        res = cond(
+            (lower != -jnp.inf) * (upper == jnp.inf),
+            lambda z: lower_bound_transform(z, integrand, lower),
+            lambda _: y,
+            y,
+        )
 
-        res = cond((lower == -jnp.inf) * (upper != jnp.inf),
-                   lambda z: upper_bound_transform(z, integrand, upper),
-                   lambda _: y,
-                   y)
+        res = cond(
+            (lower == -jnp.inf) * (upper != jnp.inf),
+            lambda z: upper_bound_transform(z, integrand, upper),
+            lambda _: y,
+            y,
+        )
 
-        res = cond((lower != -jnp.inf) * (upper != jnp.inf),
-                   lambda z: bounded_transform(z, integrand, lower, upper),
-                   lambda _: y,
-                   y)
+        res = cond(
+            (lower != -jnp.inf) * (upper != jnp.inf),
+            lambda z: bounded_transform(z, integrand, lower, upper),
+            lambda _: y,
+            y,
+        )
         return res
 
     def importance_integrand(x):
