@@ -5,7 +5,7 @@ Gauss-Hermite quadrature in JAX
 # Installation
 
 ```
-pip install git+https://github.com/SamDuffield/ghq.git
+pip install ghq
 ```
 
 # Numerical Integration
