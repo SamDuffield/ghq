@@ -1,5 +1,4 @@
 from jax import numpy as jnp, jit, random
-from jax.scipy.special import erf
 
 import ghq
 

@@ -1,0 +1,20 @@
+[project]
+name = "ghq"
+version = "0.0.1"
+description = "Gauss-Hermite quadrature in JAX"
+readme = "README.md"
+requires-python ="~=3.9"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Sam Duffield", email = "s@mduffield.com"},
+]
+keywords = ["jax", "integration", "quadrature"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+urls = {repository = "https://github.com/SamDuffield/ghq" }
+dependencies = ["jax>=0.4.13"]
+
+[tool.ruff]
+ignore-init-module-imports = true

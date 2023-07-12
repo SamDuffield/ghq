@@ -88,7 +88,8 @@ def univariate_importance(
         integrand: Function to be integrated over f(x, extra_param),
             vectorised in x and extra_param if present.
         mean: Array of n means each corresponding to a 1-D Gaussian (n,), defaults to 0.
-        sd: Array of n standard deviations each corresponding to a 1-D Gaussian (n,), defaults to 1.
+        sd: Array of n standard deviations each corresponding to a 1-D Gaussian (n,),
+            defaults to 1.
         degree: Integer number of Gauss-Hermite points, defaults to 32.
         lower: Lower bound of integration, defaults to -inf.
         upper: Upper bound of integration, defaults to inf.
