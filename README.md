@@ -75,6 +75,7 @@ The [Stan reference manual](https://mc-stan.org/docs/reference-manual/variable-t
 $$
 \int f(x)  \mathbf{N}(x \mid \mu, \Sigma) dx,
 $$
+
 in `ghq` is:
 ```python
 ghq.multivariate(f, mu, Sigma, degree=32)
