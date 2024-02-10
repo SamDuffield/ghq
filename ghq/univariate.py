@@ -2,7 +2,7 @@ from typing import Callable
 from functools import partial
 
 from numpy.polynomial.hermite_e import hermegauss
-from jax import numpy as jnp, jit, vmap
+from jax import numpy as jnp, jit, vmap, Array
 from jax.lax import cond
 from jax.scipy.stats import norm
 
@@ -17,22 +17,21 @@ def inverse_logit(x: float) -> float:
 
 @partial(jit, static_argnums=(0, 3))
 def univariate(
-    integrand: Callable[[jnp.ndarray], jnp.ndarray],
-    mean: jnp.ndarray,
-    sd: jnp.ndarray,
+    integrand: Callable[[Array], Array],
+    mean: Array,
+    sd: Array,
     degree: int = 32,
-) -> jnp.ndarray:
+) -> Array:
     """
     Gauss-Hermite integration over 1-D Gaussian(s).
     https://en.wikipedia.org/wiki/Gauss-Hermite_quadrature
 
     .. math::
 
-        \int integrand(x, extra_params) \text{N}(x | mean, sd^2) dx
+        \int integrand(x) \text{N}(x | mean, sd^2) dx
 
     Args:
-        integrand: Function to be integrated over f(x, extra_param),
-            vectorised in x and extra_param if present.
+        integrand: Function to be integrated over f(x), vectorised.
         mean: Array of n means each corresponding to a 1-D Gaussian (n,).
         sd: Array of n standard deviations each corresponding to a 1-D Gaussian (n,).
         degree: Integer number of Gauss-Hermite points, defaults to 32.
@@ -44,10 +43,10 @@ def univariate(
 
     n = mean.size
     x, w = hermegauss(degree)
-    w = w[..., jnp.newaxis]  # extend shape to (degree, 1)
     x = jnp.repeat(x[..., jnp.newaxis], n, axis=1)  # extend shape to (degree, n)
     x = sd * x + mean
-    hx = vmap(integrand)(x).reshape(x.shape)
+    hx = vmap(integrand)(x)
+    w = w.reshape((degree,) + (1,) * (hx.ndim - 1))
     return jnp.squeeze((w * hx).sum(0) / jnp.sqrt(2 * jnp.pi))
 
 
@@ -68,25 +67,24 @@ def bounded_transform(y, integrand, lower, upper):
 
 @partial(jit, static_argnums=(0, 3))
 def univariate_importance(
-    integrand: Callable[[jnp.ndarray], jnp.ndarray],
-    mean: jnp.ndarray = jnp.zeros(1),
-    sd: jnp.ndarray = jnp.ones(1),
+    integrand: Callable[[Array], Array],
+    mean: Array = jnp.zeros(1),
+    sd: Array = jnp.ones(1),
     degree: int = 32,
     lower: float = -jnp.inf,
     upper: float = jnp.inf,
-) -> jnp.ndarray:
+) -> Array:
     """
     Numerical integration using Gauss-Hermite over a 1-D Gaussian(s)
     with importance corrected weights.
 
     .. math::
 
-        \int integrand(x, extra_params)dx
-            = \int integrand(x, extra_params) / N(x | mean, sd^2) * N(x | mean, sd^2) dx
+        \int integrand(x)dx
+            = \int integrand(x) / N(x | mean, sd^2) * N(x | mean, sd^2) dx
 
     Args:
-        integrand: Function to be integrated over f(x, extra_param),
-            vectorised in x and extra_param if present.
+        integrand: Function to be integrated over f(x), vectorised in x.
         mean: Array of n means each corresponding to a 1-D Gaussian (n,), defaults to 0.
         sd: Array of n standard deviations each corresponding to a 1-D Gaussian (n,),
             defaults to 1.

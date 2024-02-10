@@ -79,3 +79,10 @@ def test_polynomial():
         9.33333,
         atol=1e-1,
     )
+
+
+def test_matrix_func():
+    def f(x):
+        return x**2 * jnp.eye(3)
+
+    assert jnp.allclose(jit(ghq.univariate, static_argnums=(0,))(f, 0, 1), jnp.eye(3))

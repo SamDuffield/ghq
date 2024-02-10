@@ -22,7 +22,7 @@ where $\lbrace x_i, w_i \rbrace_{i=1}^\mathsf{degree}$ are chosen [deterministic
 ```python
 ghq.univariate(f, mu, sigma, degree=32)
 ```
-where `f: Callable[[float], float]` is a JAX vectorisable function and `degree` is an optional argument controlling the number of function evalutions, increasing `degree` increases the accuracy of the integral.
+where `f: Callable[[float], Array]` is a JAX vectorisable function and `degree` is an optional argument controlling the number of function evalutions, increasing `degree` increases the accuracy of the integral. (Note that the output of `f` can be multivariate but the input is univariate).
 
 ## Univariate unbounded integrals
 More generally, we can use an importance-sampling-like approach to integrate functions of the form:
@@ -70,7 +70,22 @@ The [Stan reference manual](https://mc-stan.org/docs/reference-manual/variable-t
 
 
 
-## Multivariate integrals
+## Multivariate Gaussian integrals
+
+$$
+\int f(x)  \mathbf{N}(x \mid \mu, \Sigma) dx,
+$$
+in `ghq` is:
+```python
+ghq.multivariate(f, mu, Sigma, degree=32)
+```
+where `f: Callable[[Array], Array]` is a function that takes a multivariate input. 
+Beware though that multivariate Gauss-Hermite quadrature has complexity 
+$O(\text{degree}^d)$ where $d$ is the dimension of the integral, so it is not feasible 
+for high-dimensional integrals.
+
+
+## Multivariate unbounded integrals
 
 Coming soon...
 
