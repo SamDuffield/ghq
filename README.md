@@ -90,3 +90,16 @@ for high-dimensional integrals.
 
 Coming soon...
 
+
+## Citation
+
+If you use `ghq` in your research, please cite it using the following BibTeX entry:
+
+```bibtex
+@software{ghq,
+  author = {Duffield, Samuel},
+  title = {ghq: Gauss-Hermite quadrature in JAX},
+  year = {2024},
+  url = {https://github.com/SamDuffield/ghq}
+}
+```
