@@ -2,7 +2,7 @@
 
 Gauss-Hermite quadrature in JAX
 
-# Installation
+Installed easily from PyPI:
 
 ```
 pip install ghq
@@ -91,7 +91,7 @@ for high-dimensional integrals.
 Coming soon...
 
 
-## Citation
+# Citation
 
 If you use `ghq` in your research, please cite it using the following BibTeX entry:
 
