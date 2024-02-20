@@ -43,4 +43,5 @@ def multivariate(
     wn = jnp.prod(jnp.array(list(product(*(w,) * dim))), 1)
 
     hx = vmap(standardized_integrand)(xn)
+    wn = wn.reshape((degree**dim,) + (1,) * (hx.ndim - 1))
     return (wn * hx).sum(0) / jnp.sqrt(2 * jnp.pi) ** dim

@@ -46,3 +46,14 @@ def test_corr():
     degree = 32
     result = ghq.multivariate(f, mean, cov, degree)
     assert jnp.isclose(result, -0.3)
+
+
+def test_matrix_integrand():
+    def f(x):
+        return jnp.outer(x, x)
+
+    mean = jnp.array([0.0, 0.0, 0.0])
+    cov = jnp.array([[1.0, -0.3, 0.2], [-0.3, 1.0, 0.1], [0.2, 0.1, 1.0]])
+    degree = 32
+    result = ghq.multivariate(f, mean, cov, degree)
+    assert jnp.allclose(result, cov)

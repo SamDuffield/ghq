@@ -81,7 +81,7 @@ def test_polynomial():
     )
 
 
-def test_matrix_func():
+def test_matrix_integrand():
     def f(x):
         return x**2 * jnp.eye(3)
 

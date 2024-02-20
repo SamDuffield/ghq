@@ -1,6 +1,6 @@
 [project]
 name = "ghq"
-version = "0.0.3"
+version = "0.0.4"
 description = "Gauss-Hermite quadrature in JAX"
 readme = "README.md"
 requires-python ="~=3.9"
