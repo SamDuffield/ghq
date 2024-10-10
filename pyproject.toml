@@ -1,6 +1,6 @@
 [project]
 name = "ghq"
-version = "0.0.4"
+version = "0.0.5"
 description = "Gauss-Hermite quadrature in JAX"
 readme = "README.md"
 requires-python ="~=3.9"
@@ -24,4 +24,5 @@ Repository = "https://github.com/SamDuffield/ghq"
 packages = ["ghq"]
 
 [tool.ruff]
-ignore-init-module-imports = true
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]

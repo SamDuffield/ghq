@@ -36,7 +36,7 @@ def univariate(
         sd: Array of n standard deviations each corresponding to a 1-D Gaussian (n,).
         degree: Integer number of Gauss-Hermite points, defaults to 32.
     Returns:
-        out: Array of n approximate 1D Gaussian expectations.
+        Array of n approximate 1D Gaussian expectations.
     """
     mean = jnp.array(mean)
     sd = jnp.array(sd)
@@ -92,7 +92,7 @@ def univariate_importance(
         lower: Lower bound of integration, defaults to -inf.
         upper: Upper bound of integration, defaults to inf.
     Returns:
-        out: Array of n approximate 1D integrations.
+        Array of n approximate 1D integrations.
     """
 
     def transformed_integrand(y):
@@ -120,7 +120,6 @@ def univariate_importance(
 
     def importance_integrand(x):
         pdf_evals = norm.pdf(x, loc=mean, scale=sd)
-
         return jnp.where(pdf_evals > 0, transformed_integrand(x) / pdf_evals, 0)
 
     return univariate(importance_integrand, mean, sd, degree)
