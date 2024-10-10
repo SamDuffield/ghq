@@ -1,21 +1,12 @@
 import importlib.metadata
 
-from .univariate import univariate
-from .univariate import univariate_importance
+from ghq.univariate import univariate
+from ghq.univariate import univariate_importance
 
-from .multivariate import multivariate
-from .multivariate import multivariate_importance
-from .multivariate import _multivariate_cov_sqrt
-from .multivariate import multivariate_normal_log_pdf
-
-__all__ = [
-    "univariate",
-    "univariate_importance",
-    "multivariate",
-    "multivariate_importance",
-    "_multivariate_cov_sqrt",
-    "multivariate_normal_log_pdf",
-]
+from ghq.multivariate import multivariate
+from ghq.multivariate import multivariate_importance
+from ghq.multivariate import _multivariate_cov_sqrt
+from ghq.multivariate import multivariate_normal_log_pdf
 
 __version__ = importlib.metadata.version("ghq")
 
