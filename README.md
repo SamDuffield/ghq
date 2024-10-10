@@ -8,9 +8,6 @@ Installed easily from PyPI:
 pip install ghq
 ```
 
-# Numerical Integration
-
-
 ## Univariate Gaussian integrals
 Gauss-Hermite quadrature is a method for numerically integrating functions of the form:
 
