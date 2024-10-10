@@ -100,7 +100,7 @@ Although as above this is not feasible for high-dimensional integrals due to $O(
 cost. Additionally only expect good performance when the domain of $f$ is approximately the same as the domain of high probability mass for the Gaussian distribution.
 
 
-## Multivariate unbounded integrals
+## Multivariate bounded integrals
 
 Coming soon...
 
