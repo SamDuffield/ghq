@@ -88,6 +88,23 @@ for high-dimensional integrals.
 
 ## Multivariate unbounded integrals
 
+For generic multivariate integrals
+
+$$
+\int f(x) dx = \int \frac{f(x)}{\mathbf{N}(x \mid \mu, \Sigma)}  \mathbf{N}(x \mid \mu, \Sigma) dx,
+$$
+
+in `ghq` is:
+```python
+ghq.multivariate_importance(f, mu, Sigma, degree=32)
+```
+
+Although as above this is not feasible for high-dimensional integrals due to $O(\text{degree}^d)$
+cost. Additionally only expect good performance when the domain of $f$ is approximately the same as the domain of high probability mass for the Gaussian distribution.
+
+
+## Multivariate unbounded integrals
+
 Coming soon...
 
 
