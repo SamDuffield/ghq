@@ -12,12 +12,20 @@ def test_zero():
     degree = 32
     result = jit(ghq.multivariate, static_argnums=(0, 3))(f, mean, cov, degree)
     assert jnp.isclose(result, 0.0)
+    importance_result = jit(ghq.multivariate_importance, static_argnums=(0, 3))(
+        f, mean, cov, degree
+    )
+    assert jnp.isclose(importance_result, 0.0)
 
     mean = jnp.array([0.0, 0.0])
     cov = jnp.array([[1.0, -0.3], [-0.3, 1.0]])
     degree = 32
     result = ghq.multivariate(f, mean, cov, degree)
     assert jnp.isclose(result, 0.0)
+    importance_result = jit(ghq.multivariate_importance, static_argnums=(0, 3))(
+        f, mean, cov, degree
+    )
+    assert jnp.isclose(importance_result, 0.0)
 
 
 def test_x0():
@@ -57,3 +65,14 @@ def test_matrix_integrand():
     degree = 32
     result = ghq.multivariate(f, mean, cov, degree)
     assert jnp.allclose(result, cov)
+
+
+def test_importance_exp_decay():
+    def f(x):
+        return jnp.exp(-jnp.abs(x).sum())
+
+    mean = jnp.array([0.0, 0.0])
+    cov = jnp.array([[100.0, -0.3], [-0.3, 100.0]])
+    degree = 32
+    result = ghq.multivariate_importance(f, mean, cov, degree)
+    assert jnp.isclose(result, 2.0 / jnp.pi)
