@@ -4,7 +4,7 @@ from functools import partial
 
 from numpy.polynomial.hermite_e import hermegauss
 from jax import numpy as jnp, jit, Array, vmap
-from jax.scipy.linalg import cho_solve, cho_factor
+from jax.scipy.linalg import cho_factor, solve_triangular
 
 
 @partial(jit, static_argnums=(0, 3))
@@ -116,15 +116,19 @@ def multivariate_normal_log_pdf(x, mean, cov_sqrt):
     Args:
         x: Array of multivariate Gaussian samples (n, dim).
         mean: Mean of multivariate Gaussian (dim,).
-        cov_sqrt: Lower triangular Cholesky decomposition of covariance matrix (dim, dim).
+        cov_sqrt: Lower triangular Cholesky decomposition
+            of covariance matrix (dim, dim).
 
     Returns:
         Array of log PDF evaluations (n,).
     """
+
     dim = mean.size
-    z = cho_solve((cov_sqrt, True), (x - mean).T).T
-    return -0.5 * (
-        dim * jnp.log(2 * jnp.pi)
-        + 2 * jnp.sum(jnp.log(jnp.diag(cov_sqrt)))
-        + jnp.sum(z**2, -1)
-    )
+
+    centered_x = x - mean
+    y = solve_triangular(cov_sqrt, centered_x.T, lower=True).T
+    maha = jnp.sum(y**2, axis=-1)
+    log_det = 2 * jnp.sum(jnp.log(jnp.diag(cov_sqrt)))
+    norm_const = dim * jnp.log(2 * jnp.pi) + log_det
+    log_pdf = -0.5 * (norm_const + maha)
+    return log_pdf
