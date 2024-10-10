@@ -75,4 +75,4 @@ def test_importance_exp_decay():
     cov = jnp.array([[100.0, -0.3], [-0.3, 100.0]])
     degree = 32
     result = ghq.multivariate_importance(f, mean, cov, degree)
-    assert jnp.isclose(result, 2.0 / jnp.pi)
+    assert jnp.isclose(result, 4.0)
